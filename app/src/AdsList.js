@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Table } from 'reactstrap';
+import { Button, Container, Table } from 'reactstrap';
 import AppNavbar from './AppNavbar';
 
 class AdsList extends Component {
@@ -9,6 +9,7 @@ class AdsList extends Component {
         this.state = {ads: [], isLoading: true};
         this.compareBy = this.compareBy.bind(this);
         this.sortBy = this.sortBy.bind(this);
+        this.downloadAsJson = this.downloadAsJson.bind(this);
     }
 
     componentDidMount() {
@@ -16,7 +17,7 @@ class AdsList extends Component {
 
         fetch('api/ads')
             .then(response => response.json())
-            .then(data => this.setState({ads: data, isLoading: false}));
+    .then(data => this.setState({ads: data, isLoading: false}));
     }
 
     compareBy(key) {
@@ -35,6 +36,18 @@ class AdsList extends Component {
         this.setState({ads: arrayCopy});
     }
 
+    downloadAsJson() {
+        const filename = 'ads.json';
+        const fileToSave = new Blob([JSON.stringify(this.state.ads)], {
+            type: 'application/json',
+            name: filename
+        });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(fileToSave);
+        a.download = filename;
+        a.click();
+    }
+
     render() {
         const {ads, isLoading} = this.state;
 
@@ -44,36 +57,39 @@ class AdsList extends Component {
 
         const adsList = ads.map(ad => {
             return <tr key={ad.id}>
-                <td style={{whiteSpace: 'nowrap'}}>{ad.id}</td>
-                <td><a href={ad.link} target="_blank" rel="noopener noreferrer">{ad.title}</a></td>
-                <td>{ad.city}</td>
-                <td>
-                    <img className="img-thumbnail" alt={ad.mainPicture.title} src={ad.mainPicture.link}/>
-                </td>
-            </tr>
-        });
+            <td style={{whiteSpace: 'nowrap'}}>{ad.id}</td>
+        <td><a href={ad.link} target="_blank" rel="noopener noreferrer">{ad.title}</a></td>
+        <td>{ad.city}</td>
+        <td>
+        <img className="img-thumbnail" alt={ad.mainPicture.title} src={ad.mainPicture.link}/>
+        </td>
+        </tr>
+    });
 
         return (
             <div>
-                <AppNavbar/>
-                <Container fluid>
-                    <h3>Fetched Data</h3>
-                    <Table className="mt-4">
-                        <thead>
-                        <tr>
-                            <th><a onClick={() => this.sortBy('id')}>Id</a></th>
-                            <th><a onClick={() => this.sortBy('title')}>Title</a></th>
-                            <th><a onClick={() => this.sortBy('city')}>City</a></th>
-                            <th>Picture</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {adsList}
-                        </tbody>
-                    </Table>
-                </Container>
+            <AppNavbar/>
+            <Container fluid>
+        <div className="float-right">
+            <Button onClick={() => this.downloadAsJson()} color="success">Download as JSON</Button>
             </div>
-        );
+            <h3>Fetched Data</h3>
+        <Table className="mt-4">
+            <thead>
+            <tr>
+            <th><a onClick={() => this.sortBy('id')}>Id</a></th>
+        <th><a onClick={() => this.sortBy('title')}>Title</a></th>
+        <th><a onClick={() => this.sortBy('city')}>City</a></th>
+        <th>Picture</th>
+        </tr>
+        </thead>
+        <tbody>
+        {adsList}
+        </tbody>
+        </Table>
+        </Container>
+        </div>
+    );
     }
 }
 
