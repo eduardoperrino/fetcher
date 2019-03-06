@@ -36,6 +36,6 @@
   margin-top: 20px;
 }
 
-th:hover{
+th a:hover {
   cursor: pointer;
 }
