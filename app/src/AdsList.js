@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
-import { Button, Container, Table } from 'reactstrap';
+import React, {Component} from 'react';
+import {Row, Col, Button, Container, Table} from 'reactstrap';
 import AppNavbar from './AppNavbar';
+import ReactLoading from 'react-loading';
 
 class AdsList extends Component {
 
@@ -17,7 +18,7 @@ class AdsList extends Component {
 
         fetch('api/ads')
             .then(response => response.json())
-    .then(data => this.setState({ads: data, isLoading: false}));
+            .then(data => this.setState({ads: data, isLoading: false}));
     }
 
     compareBy(key) {
@@ -52,44 +53,53 @@ class AdsList extends Component {
         const {ads, isLoading} = this.state;
 
         if (isLoading) {
-            return <p>Loading...</p>;
+            return (
+                    <Container>
+                        <Row>
+                            <Col className={'text-center'}>
+                                <h2>Loading</h2>
+                                <ReactLoading type={'bars'} color={'#214b56'} height={'80%'} width={'100%'}/>
+                            </Col>
+                        </Row>
+                    </Container>
+            );
         }
 
         const adsList = ads.map(ad => {
             return <tr key={ad.id}>
-            <td style={{whiteSpace: 'nowrap'}}>{ad.id}</td>
-        <td><a href={ad.link} target="_blank" rel="noopener noreferrer">{ad.title}</a></td>
-        <td>{ad.city}</td>
-        <td>
-        <img className="img-thumbnail" alt={ad.mainPicture.title} src={ad.mainPicture.link}/>
-        </td>
-        </tr>
-    });
+                <td style={{whiteSpace: 'nowrap'}}>{ad.id}</td>
+                <td><a href={ad.link} target="_blank" rel="noopener noreferrer">{ad.title}</a></td>
+                <td>{ad.city}</td>
+                <td>
+                    <img className="img-thumbnail" alt={ad.mainPicture.title} src={ad.mainPicture.link}/>
+                </td>
+            </tr>
+        });
 
         return (
             <div>
-            <AppNavbar/>
-            <Container fluid>
-        <div className="float-right">
-            <Button onClick={() => this.downloadAsJson()} color="success">Download as JSON</Button>
+                <AppNavbar/>
+                <Container fluid>
+                    <div className="float-right">
+                        <Button onClick={() => this.downloadAsJson()} color="success">Download as JSON</Button>
+                    </div>
+                    <h3>Fetched Data</h3>
+                    <Table className="mt-4">
+                        <thead>
+                        <tr>
+                            <th><a onClick={() => this.sortBy('id')}>Id</a></th>
+                            <th><a onClick={() => this.sortBy('title')}>Title</a></th>
+                            <th><a onClick={() => this.sortBy('city')}>City</a></th>
+                            <th>Picture</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {adsList}
+                        </tbody>
+                    </Table>
+                </Container>
             </div>
-            <h3>Fetched Data</h3>
-        <Table className="mt-4">
-            <thead>
-            <tr>
-            <th><a onClick={() => this.sortBy('id')}>Id</a></th>
-        <th><a onClick={() => this.sortBy('title')}>Title</a></th>
-        <th><a onClick={() => this.sortBy('city')}>City</a></th>
-        <th>Picture</th>
-        </tr>
-        </thead>
-        <tbody>
-        {adsList}
-        </tbody>
-        </Table>
-        </Container>
-        </div>
-    );
+        );
     }
 }
 
