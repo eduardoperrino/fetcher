@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -36,18 +37,18 @@ public class TrovitFetcherService implements FetcherService {
         private static String default_picture_title = "Image title";
 
         static Collection<Advert> convert(List<Map<String, Object>> ads) {
-            List<Advert> adverts = new ArrayList<>();
-            ads.stream().forEach( x -> {
-                adverts.add(Advert.builder()
-                        .id(extractKey(x, "id"))
-                        .title(extractKey(x, "title"))
-                        .city(extractKey(x, "city"))
-                        .link(extractKey(x, "url"))
-                        .type(extractKey(x, "type"))
-                        .mainPicture(buildPicture((Map)x.get("pictures")))
-                        .build());
-            });
-            return adverts;
+            return ads.stream().map(AdsMapper::buildAdvert).collect(Collectors.toList());
+        }
+
+        static Advert buildAdvert(Map<String, Object> data) {
+            return Advert.builder()
+                    .id(extractKey(data, "id"))
+                    .title(extractKey(data, "title"))
+                    .city(extractKey(data, "city"))
+                    .link(extractKey(data, "url"))
+                    .type(extractKey(data, "type"))
+                    .mainPicture(buildPicture((Map)data.get("pictures")))
+                    .build();
         }
 
         static Picture buildPicture(Map picture) {
