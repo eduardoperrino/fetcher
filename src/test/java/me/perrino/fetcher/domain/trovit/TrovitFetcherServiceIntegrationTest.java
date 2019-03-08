@@ -56,6 +56,28 @@ public class TrovitFetcherServiceIntegrationTest {
     }
 
     @Test
+    public void givenEmptyFeed_thenZeroAdsAreReturned() {
+        String fileName = "__files/empty.xml";
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        mockServer.expect(once(), requestTo(feed_url))
+                .andRespond(withSuccess(new FileUrlResource(classLoader.getResource(fileName)), MediaType.APPLICATION_XML));
+        Collection<Advert> ads = trovitFetcherService.fetchAds();
+        assertThat(ads, notNullValue());
+        assertThat(ads.size(), is(0));
+    }
+
+    @Test
+    public void givenWrongFeedFormat_thenZeroAdsAreReturned() {
+        String fileName = "__files/wrong_format.xml";
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        mockServer.expect(once(), requestTo(feed_url))
+                .andRespond(withSuccess(new FileUrlResource(classLoader.getResource(fileName)), MediaType.APPLICATION_XML));
+        Collection<Advert> ads = trovitFetcherService.fetchAds();
+        assertThat(ads, notNullValue());
+        assertThat(ads.size(), is(0));
+    }
+
+    @Test
     public void givenFeedResponse_thenAdsAreReturned() {
         String fileName = "__files/completed.xml";
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
