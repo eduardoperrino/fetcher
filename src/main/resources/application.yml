@@ -1,0 +1,13 @@
+trovit.feed.url: http://feeds.spotahome.com/trovit-Ireland.xml
+logging:
+    level:
+        me.perrino.fetcher: DEBUG
+
+---
+
+spring:
+    profiles: prod
+logging:
+    level:
+        me.perrino.fetcher: DEBUG
+        org.apache.http: ERROR
