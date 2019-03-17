@@ -23,8 +23,8 @@ class AdsList extends Component {
 
     compareBy(key) {
         return function (a, b) {
-            let parsedA = parseInt(a[key]) || a[key];
-            let parsedB = parseInt(b[key]) || b[key];
+            let parsedA = parseInt(a[key]) || a[key].toLowerCase();
+            let parsedB = parseInt(b[key]) || b[key].toLowerCase();
             if (parsedA < parsedB) return -1;
             if (parsedA > parsedB) return 1;
             return 0;
